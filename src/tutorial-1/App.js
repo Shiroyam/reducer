@@ -14,23 +14,34 @@ function reducer(state, action) {
       },
     ];
   }
+
+  if (action.type === "DELET_TASK"){
+    return state.filter((elem) => elem.id !== action.id)
+  }
   return state;
 }
 
 function App() {
-  const [id, setId] = React.useState(0);
 
-  const [state, dispatch] = React.useReducer(reducer, [{}]);
+  const [id, setId] = React.useState(-1)
+  const [state, dispatch] = React.useReducer(reducer, []);
 
   const AddTask = (value, check) => {
-    setId(id + 1);
+    setId(id + 1)
     dispatch({
       type: "ADD_TASK",
       value,
       check,
-      id,
+      id
     });
   };
+
+  const DeletTask = (id) => {
+    dispatch({
+      type: "DELET_TASK",
+      id
+    })
+  }
   return (
     <div className="App">
       <Paper className="wrapper">
@@ -47,7 +58,7 @@ function App() {
         <Divider />
         <List>
           {state.map((obj) => (
-            <Item key={obj.id} text={obj.text} complete={obj.completed} />
+            <Item DeletTask={DeletTask} id={obj.id} key={obj.id} text={obj.text} complete={obj.completed} />
           ))}
         </List>
         <Divider />
