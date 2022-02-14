@@ -20,7 +20,7 @@ export const Item = ({ text, DeletTask, id }) => {
             <EditIcon style={{ fontSize: 20 }} />
           </IconButton>
           <IconButton>
-            <DeleteOutlineIcon onClick={()=>DeletTask(id)} style={{ fontSize: 20 }} />
+            <DeleteOutlineIcon onClick={() => DeletTask(id)} style={{ fontSize: 20 }} />
           </IconButton>
         </div>
       </div>
