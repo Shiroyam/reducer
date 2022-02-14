@@ -36,10 +36,13 @@ function App() {
   };
 
   const DeletTask = (id) => {
-    dispatch({
+    if(window.confirm('Хотите удалить?')){
+      dispatch({
       type: "DELET_TASK",
       id,
     });
+    }
+    
   };
   return (
     <div className="App">
