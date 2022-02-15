@@ -3,7 +3,6 @@ import { Paper, Divider, Button, List, Tabs, Tab } from "@mui/material";
 import { AddField } from "./components/AddField";
 import { Item } from "./components/Item";
 
-
 function reducer(state, action) {
   if (action.type === "ADD_TASK") {
     return [
@@ -26,8 +25,7 @@ function reducer(state, action) {
 
   if (action.type === "FALSE_CHECKBOX") {
     return state.map((obj) => {
-      return { ...obj, 
-        completed: !obj.completed };
+      return { ...obj, completed: !obj.completed };
     });
   }
 
@@ -114,41 +112,43 @@ function App() {
         </Tabs>
         <Divider />
         <List>
-          {activeBtn === 0 && 
-          state.map((obj) => (
-            <Item
-              deletTask={deletTask}
-              id={obj.id}
-              key={obj.id}
-              text={obj.text}
-              completed={obj.completed}
-              onClickCheckbox={() => toggleComplete(obj.id)}
-            />
-          ))}
+          {activeBtn === 0 &&
+            state.map((obj) => (
+              <Item
+                deletTask={deletTask}
+                id={obj.id}
+                key={obj.id}
+                text={obj.text}
+                completed={obj.completed}
+                onClickCheckbox={() => toggleComplete(obj.id)}
+              />
+            ))}
           {activeBtn === 1 &&
-          state.filter((obj) => obj.completed === true).map((obj) => (
-            <Item
-              deletTask={deletTask}
-              id={obj.id}
-              key={obj.id}
-              text={obj.text}
-              completed={obj.completed}
-              onClickCheckbox={() => toggleComplete(obj.id)}
-            />
-          ))
-          }
+            state
+              .filter((obj) => obj.completed === true)
+              .map((obj) => (
+                <Item
+                  deletTask={deletTask}
+                  id={obj.id}
+                  key={obj.id}
+                  text={obj.text}
+                  completed={obj.completed}
+                  onClickCheckbox={() => toggleComplete(obj.id)}
+                />
+              ))}
           {activeBtn === 2 &&
-          state.filter((obj) => obj.completed === false).map((obj) => (
-            <Item
-              deletTask={deletTask}
-              id={obj.id}
-              key={obj.id}
-              text={obj.text}
-              completed={obj.completed}
-              onClickCheckbox={() => toggleComplete(obj.id)}
-            />
-          ))
-          }
+            state
+              .filter((obj) => obj.completed === false)
+              .map((obj) => (
+                <Item
+                  deletTask={deletTask}
+                  id={obj.id}
+                  key={obj.id}
+                  text={obj.text}
+                  completed={obj.completed}
+                  onClickCheckbox={() => toggleComplete(obj.id)}
+                />
+              ))}
         </List>
         <Divider />
         <div className="check-buttons">
