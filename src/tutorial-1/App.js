@@ -8,27 +8,60 @@ function reducer(state, action) {
     return [
       ...state,
       {
-        id: action.id,
-        text: action.value,
-        complete: action.check,
+        id: action.payload.id,
+        text: action.payload.value,
+        completed: action.payload.check,
       },
     ];
+  }
+
+  if (action.type === "DELET_TASK") {
+    return state.filter((obj) => obj.id !== action.payload);
+  }
+
+  if (action.type === "TOGGLE_CHECKED") {
+    return state.map((obj) => {
+      if (obj.id === action.payload) {
+        return {
+          ...obj,
+          completed: !obj.completed,
+        };
+      }
+      return obj;
+    });
   }
   return state;
 }
 
 function App() {
-  const [id, setId] = React.useState(0);
+  const [id, setId] = React.useState(null);
+  const [state, dispatch] = React.useReducer(reducer, []);
 
-  const [state, dispatch] = React.useReducer(reducer, [{}]);
-
-  const AddTask = (value, check) => {
+  const addTask = (value, check) => {
     setId(id + 1);
     dispatch({
       type: "ADD_TASK",
-      value,
-      check,
-      id,
+      payload: {
+        value,
+        check,
+        id,
+      },
+    });
+  };
+
+  const deletTask = (id) => {
+    if (window.confirm("Хотите удалить?")) {
+      dispatch({
+        type: "DELET_TASK",
+        payload: id,
+      });
+    }
+  };
+
+  const toggleComplete = (id) => {
+    dispatch({
+      type: "TOGGLE_CHECKED",
+      payload: id,
     });
   };
   return (
@@ -37,7 +70,7 @@ function App() {
         <Paper className="header" elevation={0}>
           <h4>Список задач</h4>
         </Paper>
-        <AddField onAdd={AddTask} />
+        <AddField onAdd={addTask} />
         <Divider />
         <Tabs value={0}>
           <Tab label="Все" />
@@ -47,7 +80,14 @@ function App() {
         <Divider />
         <List>
           {state.map((obj) => (
-            <Item key={obj.id} text={obj.text} complete={obj.completed} />
+            <Item
+              deletTask={deletTask}
+              id={obj.id}
+              key={obj.id}
+              text={obj.text}
+              completed={obj.completed}
+              onClickCheckbox={() => toggleComplete(obj.id)}
+            />
           ))}
         </List>
         <Divider />
