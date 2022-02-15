@@ -3,12 +3,13 @@ import { Paper, Divider, Button, List, Tabs, Tab } from "@mui/material";
 import { AddField } from "./components/AddField";
 import { Item } from "./components/Item";
 
+
 function reducer(state, action) {
   if (action.type === "ADD_TASK") {
     return [
       ...state,
       {
-        id: action.payload.id,
+        id: +new Date() + Math.random(),
         text: action.payload.value,
         completed: action.payload.check,
       },
@@ -17,6 +18,17 @@ function reducer(state, action) {
 
   if (action.type === "DELET_TASK") {
     return state.filter((obj) => obj.id !== action.payload);
+  }
+
+  if (action.type === "CLEAR_TASK") {
+    return [];
+  }
+
+  if (action.type === "FALSE_CHECKBOX") {
+    return state.map((obj) => {
+      return { ...obj, 
+        completed: !obj.completed };
+    });
   }
 
   if (action.type === "TOGGLE_CHECKED") {
@@ -34,17 +46,15 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [id, setId] = React.useState(null);
+  const [activeBtn, setActiveBtn] = React.useState(0);
   const [state, dispatch] = React.useReducer(reducer, []);
 
   const addTask = (value, check) => {
-    setId(id + 1);
     dispatch({
       type: "ADD_TASK",
       payload: {
         value,
         check,
-        id,
       },
     });
   };
@@ -64,6 +74,31 @@ function App() {
       payload: id,
     });
   };
+
+  const onClickBtnClear = () => {
+    dispatch({
+      type: "CLEAR_TASK",
+    });
+  };
+
+  const onClickCheckboxFalse = () => {
+    dispatch({
+      type: "FALSE_CHECKBOX",
+    });
+  };
+
+  const onClickTaskAll = () => {
+    setActiveBtn(0);
+  };
+
+  const onClickTaskActive = () => {
+    setActiveBtn(1);
+  };
+
+  const onClickTaskEnd = () => {
+    setActiveBtn(2);
+  };
+
   return (
     <div className="App">
       <Paper className="wrapper">
@@ -72,14 +107,15 @@ function App() {
         </Paper>
         <AddField onAdd={addTask} />
         <Divider />
-        <Tabs value={0}>
-          <Tab label="Все" />
-          <Tab label="Активные" />
-          <Tab label="Завершённые" />
+        <Tabs value={activeBtn}>
+          <Tab label="Все" onClick={onClickTaskAll} />
+          <Tab label="Активные" onClick={onClickTaskActive} />
+          <Tab label="Завершённые" onClick={onClickTaskEnd} />
         </Tabs>
         <Divider />
         <List>
-          {state.map((obj) => (
+          {activeBtn === 0 && 
+          state.map((obj) => (
             <Item
               deletTask={deletTask}
               id={obj.id}
@@ -89,11 +125,35 @@ function App() {
               onClickCheckbox={() => toggleComplete(obj.id)}
             />
           ))}
+          {activeBtn === 1 &&
+          state.filter((obj) => obj.completed === true).map((obj) => (
+            <Item
+              deletTask={deletTask}
+              id={obj.id}
+              key={obj.id}
+              text={obj.text}
+              completed={obj.completed}
+              onClickCheckbox={() => toggleComplete(obj.id)}
+            />
+          ))
+          }
+          {activeBtn === 2 &&
+          state.filter((obj) => obj.completed === false).map((obj) => (
+            <Item
+              deletTask={deletTask}
+              id={obj.id}
+              key={obj.id}
+              text={obj.text}
+              completed={obj.completed}
+              onClickCheckbox={() => toggleComplete(obj.id)}
+            />
+          ))
+          }
         </List>
         <Divider />
         <div className="check-buttons">
-          <Button>Отметить всё</Button>
-          <Button>Очистить</Button>
+          <Button onClick={onClickCheckboxFalse}>Отметить всё</Button>
+          <Button onClick={onClickBtnClear}>Очистить</Button>
         </div>
       </Paper>
     </div>
